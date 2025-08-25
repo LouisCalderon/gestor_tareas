@@ -1,0 +1,29 @@
+{
+  "tareas": [
+    {
+      "id": 1,
+      "texto": "comprar leeche",
+      "hecho": true,
+      "fecha_creacion": "2025-08-25 15:53"
+    },
+    {
+      "id": 2,
+      "texto": "Comprar huevos",
+      "hecho": true,
+      "fecha_creacion": "2025-08-25 15:53"
+    },
+    {
+      "id": 3,
+      "texto": "Hola como estas?",
+      "hecho": false,
+      "fecha_creacion": "2025-08-25 15:54"
+    },
+    {
+      "id": 4,
+      "texto": "Hola como estas?",
+      "hecho": false,
+      "fecha_creacion": "2025-08-25 15:55"
+    }
+  ],
+  "contador_id": 5
+}

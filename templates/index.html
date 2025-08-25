@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Tareas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📋 Gestor de Tareas</h1>
+            <p>Organiza tu día de manera eficiente</p>
+        </div>
+
+        <!-- Formulario para agregar nueva tarea -->
+        <div class="formulario">
+            <form action="/agregar" method="post">
+                <input type="text" name="texto_tarea" placeholder="¿Qué necesitas hacer hoy?" required>
+                <button type="submit">➕ Agregar Tarea</button>
+            </form>
+        </div>
+
+        <!-- Lista de tareas -->
+        <div class="tareas-container">
+            {% if tareas %}
+                <ul>
+                    {% for tarea in tareas %}
+                        <li class="tarea-item {% if tarea['hecho'] %}completada{% endif %}">
+                            <div class="tarea-texto">
+                                {{ tarea['texto'] }}
+                            </div>
+                            
+                            <div class="tarea-acciones">
+                                {% if tarea['hecho'] %}
+                                    <a href="/completar/{{ tarea['id'] }}" class="btn btn-deshacer">
+                                        🔄 Deshacer
+                                    </a>
+                                {% else %}
+                                    <a href="/completar/{{ tarea['id'] }}" class="btn btn-completar">
+                                        ✅ Completar
+                                    </a>
+                                {% endif %}
+                                
+                                <a href="/eliminar/{{ tarea['id'] }}" 
+                                   class="btn btn-eliminar"
+                                   onclick="return confirm('¿Estás seguro de que quieres eliminar esta tarea?')">
+                                    🗑️ Eliminar
+                                </a>
+                            </div>
+                            
+                            <div class="estado">
+                                <div class="estado-fecha">
+                                    📅 {{ tarea['fecha_creacion'] }}
+                                </div>
+                                <div class="estado-badge {% if tarea['hecho'] %}badge-completada{% else %}badge-pendiente{% endif %}">
+                                    {% if tarea['hecho'] %}Completada{% else %}Pendiente{% endif %}
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="no-tareas">
+                    <h3>🎯 ¡No hay tareas pendientes!</h3>
+                    <p>Agrega tu primera tarea arriba para comenzar a organizar tu día</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
