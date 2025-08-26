@@ -3,7 +3,7 @@
     {
       "id": 1,
       "texto": "comprar leeche",
-      "hecho": true,
+      "hecho": false,
       "fecha_creacion": "2025-08-25 15:53"
     },
     {
@@ -15,7 +15,7 @@
     {
       "id": 3,
       "texto": "Hola como estas?",
-      "hecho": false,
+      "hecho": true,
       "fecha_creacion": "2025-08-25 15:54"
     },
     {

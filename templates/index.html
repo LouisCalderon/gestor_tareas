@@ -10,7 +10,7 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>📋 Gestor de Tareas</h1>
+            <h1>Gestor de Tareas</h1>
             <p>Organiza tu día de manera eficiente</p>
         </div>
 
@@ -18,7 +18,7 @@
         <div class="formulario">
             <form action="/agregar" method="post">
                 <input type="text" name="texto_tarea" placeholder="¿Qué necesitas hacer hoy?" required>
-                <button type="submit">➕ Agregar Tarea</button>
+                <button type="submit">Agregar</button>
             </form>
         </div>
 
@@ -27,47 +27,151 @@
             {% if tareas %}
                 <ul>
                     {% for tarea in tareas %}
-                        <li class="tarea-item {% if tarea['hecho'] %}completada{% endif %}">
-                            <div class="tarea-texto">
-                                {{ tarea['texto'] }}
+                        <li class="tarea-item {% if tarea['hecho'] %}completada{% endif %}" data-id="{{ tarea['id'] }}">
+                            <div class="tarea-contenido">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" 
+                                           {% if tarea['hecho'] %}checked{% endif %}
+                                           onchange="toggleTarea({{ tarea['id'] }}, this.checked)">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <div class="tarea-texto" onclick="editarTexto(this, {{ tarea['id'] }})">
+                                    {{ tarea['texto'] }}
+                                </div>
                             </div>
                             
                             <div class="tarea-acciones">
-                                {% if tarea['hecho'] %}
-                                    <a href="/completar/{{ tarea['id'] }}" class="btn btn-deshacer">
-                                        🔄 Deshacer
-                                    </a>
-                                {% else %}
-                                    <a href="/completar/{{ tarea['id'] }}" class="btn btn-completar">
-                                        ✅ Completar
-                                    </a>
-                                {% endif %}
-                                
                                 <a href="/eliminar/{{ tarea['id'] }}" 
                                    class="btn btn-eliminar"
                                    onclick="return confirm('¿Estás seguro de que quieres eliminar esta tarea?')">
-                                    🗑️ Eliminar
+                                    Eliminar
                                 </a>
                             </div>
                             
                             <div class="estado">
                                 <div class="estado-fecha">
-                                    📅 {{ tarea['fecha_creacion'] }}
+                                    {{ tarea['fecha_creacion'] }}
                                 </div>
-                                <div class="estado-badge {% if tarea['hecho'] %}badge-completada{% else %}badge-pendiente{% endif %}">
-                                    {% if tarea['hecho'] %}Completada{% else %}Pendiente{% endif %}
+                                {% if tarea['hecho'] %}
+                                <div class="estado-badge badge-completada">
+                                    Completada
                                 </div>
+                                {% endif %}
                             </div>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
                 <div class="no-tareas">
-                    <h3>🎯 ¡No hay tareas pendientes!</h3>
+                    <h3>No hay tareas pendientes</h3>
                     <p>Agrega tu primera tarea arriba para comenzar a organizar tu día</p>
                 </div>
             {% endif %}
         </div>
     </div>
+
+    <script>
+        function toggleTarea(id, completada) {
+            fetch(`/completar/${id}`)
+                .then(response => {
+                    if (response.ok) {
+                        const tareaItem = document.querySelector(`[data-id="${id}"]`);
+                        if (completada) {
+                            tareaItem.classList.add('completada');
+                        } else {
+                            tareaItem.classList.remove('completada');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cambiar estado:', error);
+                });
+        }
+
+        function editarTexto(elemento, id) {
+            // Si ya está editando, no hacer nada
+            if (elemento.querySelector('input')) return;
+            
+            const textoOriginal = elemento.textContent.trim();
+            
+            // Crear input de edición
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = textoOriginal;
+            input.className = 'edit-input';
+            
+            // Limpiar el elemento y agregar el input
+            elemento.innerHTML = '';
+            elemento.appendChild(input);
+            
+            // Enfocar el input
+            input.focus();
+            input.select();
+            
+            // Función para guardar cambios
+            function guardarCambios() {
+                const nuevoTexto = input.value.trim();
+                
+                if (nuevoTexto === '') {
+                    // Si está vacío, restaurar texto original
+                    elemento.textContent = textoOriginal;
+                    return;
+                }
+                
+                if (nuevoTexto === textoOriginal) {
+                    // Si no cambió, solo restaurar
+                    elemento.textContent = textoOriginal;
+                    return;
+                }
+                
+                // Enviar cambio al servidor
+                fetch(`/editar/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `texto_tarea=${encodeURIComponent(nuevoTexto)}`
+                })
+                .then(response => {
+                    if (response.ok) {
+                        elemento.textContent = nuevoTexto;
+                        // Mostrar mensaje de éxito
+                        mostrarMensaje('Tarea editada exitosamente!', 'success');
+                    } else {
+                        elemento.textContent = textoOriginal;
+                        mostrarMensaje('Error al editar la tarea', 'error');
+                    }
+                })
+                .catch(error => {
+                    elemento.textContent = textoOriginal;
+                    mostrarMensaje('Error al editar la tarea', 'error');
+                });
+            }
+            
+            // Eventos del input
+            input.addEventListener('blur', guardarCambios);
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    guardarCambios();
+                } else if (e.key === 'Escape') {
+                    elemento.textContent = textoOriginal;
+                }
+            });
+        }
+        
+        function mostrarMensaje(texto, tipo) {
+            // Crear mensaje temporal
+            const mensaje = document.createElement('div');
+            mensaje.className = `mensaje-temp mensaje-${tipo}`;
+            mensaje.textContent = texto;
+            
+            document.body.appendChild(mensaje);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                mensaje.remove();
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
