@@ -1,25 +1,64 @@
-# Gestor de Tareas - Aplicación Flask
+# Gestor de Tareas
 
-Una aplicación web simple para gestionar tareas, construida con Flask con persistencia en archivo JSON.
+Una aplicación web simple para gestionar tareas, construida con Flask.
 
 ## Características
 
-- ✅ Crear, editar y eliminar tareas
-- 🎯 Sistema de prioridades (baja, media, alta)
-- 📅 Fechas de creación automáticas
-- 🎨 Interfaz moderna y responsive
-- 💾 Persistencia en archivo JSON
-- 📱 Diseño responsive
+- Agregar nuevas tareas
+- Marcar tareas como completadas
+- Editar tareas existentes
+- Eliminar tareas
+- Interfaz web responsive
 
-## Instalación
+## Despliegue en Railway
 
-1. **Activar el entorno virtual:**
+### Prerrequisitos
+
+1. Tener una cuenta en [Railway](https://railway.app)
+2. Tener Git instalado
+3. Tener GitHub conectado a Railway
+
+### Pasos para el despliegue
+
+1. **Crear cuenta en Railway:**
+   - Ve a [railway.app](https://railway.app)
+   - Inicia sesión con tu cuenta de GitHub
+
+2. **Crear un nuevo proyecto:**
+   - Haz clic en "New Project"
+   - Selecciona "Deploy from GitHub repo"
+   - Conecta tu repositorio de GitHub
+
+3. **Configurar el despliegue:**
+   - Railway detectará automáticamente que es una aplicación Python
+   - El archivo `railway.json` configurará el despliegue
+   - El archivo `nixpacks.toml` configurará el build
+
+4. **Desplegar:**
+   - Railway construirá y desplegará automáticamente tu aplicación
+   - Cada push a tu rama principal activará un nuevo despliegue
+
+5. **Configurar variables de entorno (opcional):**
+   - En Railway, ve a tu proyecto → Variables
+   - Agrega `SECRET_KEY` con un valor seguro
+
+6. **Obtener la URL:**
+   - Railway te dará una URL automáticamente
+   - Puedes configurar un dominio personalizado si lo deseas
+
+### Estructura de archivos para Railway
+
+- `railway.json`: Configuración del despliegue en Railway
+- `nixpacks.toml`: Configuración del build de Python
+- `requirements.txt`: Lista las dependencias de Python
+- `app.py`: Aplicación principal de Flask
+
+## Desarrollo local
+
+1. **Crear entorno virtual:**
    ```bash
-   # En Windows
-   venv\Scripts\activate
-   
-   # En macOS/Linux
-   source venv/bin/activate
+   python -m venv venv
+   source venv/bin/activate  # En Windows: venv\Scripts\activate
    ```
 
 2. **Instalar dependencias:**
@@ -37,68 +76,17 @@ Una aplicación web simple para gestionar tareas, construida con Flask con persi
    http://localhost:5000
    ```
 
-## Estructura del Proyecto
+## Tecnologías utilizadas
 
-```
-gestor_tareas/
-├── app.py              # Aplicación principal Flask
-├── tareas.json         # Archivo de persistencia JSON
-├── requirements.txt    # Dependencias del proyecto
-├── README.md          # Este archivo
-├── templates/         # Plantillas HTML
-│   ├── index.html     # Página principal
-│   └── nueva_tarea.html # Formulario de nueva tarea
-├── static/            # Archivos estáticos
-│   └── style.css      # Estilos CSS
-└── venv/              # Entorno virtual
-```
+- **Backend**: Flask (Python)
+- **Frontend**: HTML, CSS, JavaScript
+- **Base de datos**: Almacenamiento en memoria (para desarrollo)
+- **Despliegue**: Railway
 
-## Uso
+## Ventajas de Railway
 
-- **Ver tareas:** Navega a la página principal
-- **Crear tarea:** Usa el formulario en la parte superior
-- **Marcar como completada:** Haz clic en el botón verde de check
-- **Deshacer tarea:** Haz clic en el botón de deshacer para tareas completadas
-- **Eliminar tarea:** Haz clic en el botón rojo de papelera
-
-## Persistencia de Datos
-
-La aplicación ahora utiliza un archivo JSON (`tareas.json`) para almacenar las tareas de forma persistente. Esto significa que:
-
-- Las tareas se mantienen entre reinicios de la aplicación
-- No se requiere configuración de base de datos
-- Los datos se guardan automáticamente en cada operación
-- El archivo se crea automáticamente si no existe
-
-### Estructura del archivo JSON:
-```json
-{
-  "tareas": [
-    {
-      "id": 1,
-      "texto": "Descripción de la tarea",
-      "hecho": false,
-      "fecha_creacion": "2024-01-15 10:30"
-    }
-  ],
-  "contador_id": 2
-}
-```
-
-## Tecnologías Utilizadas
-
-- **Backend:** Flask
-- **Frontend:** HTML, CSS
-- **Persistencia:** JSON
-- **Lenguaje:** Python 3.x
-
-## Desarrollo
-
-Para desarrollo local, la aplicación se ejecuta en modo debug. Los cambios en el código se reflejarán automáticamente al recargar la página.
-
-## Notas de Implementación
-
-- Las tareas se cargan automáticamente al iniciar la aplicación
-- Cada operación (crear, modificar, eliminar) guarda automáticamente en el archivo JSON
-- El sistema maneja errores de lectura/escritura de archivos de forma robusta
-- Se mantiene un contador de IDs para asegurar unicidad
+- **Simplicidad**: Despliegue automático desde GitHub
+- **Gratis**: Plan gratuito generoso
+- **Rápido**: Builds y despliegues muy rápidos
+- **Integración**: Perfecta integración con GitHub
+- **Escalabilidad**: Fácil escalar cuando sea necesario
